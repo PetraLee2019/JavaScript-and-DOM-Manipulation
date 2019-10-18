@@ -1,54 +1,43 @@
-// from data.js
+// UFO Sightings - Javascript
+
+// Variable Declaration
+let tbody = d3.select("tbody");
+// From data.js
 var tableData = data;
 
-// log the tableData
-console.log(tableData);
+// Function Build Table
+function buildTable(data){
+    // Start By Clearing Existing Data
+    tbody.html("");
+    // Loop Through `data` 
+    data.forEach((dataRow) => {
+        // Append Table Row `tr` to the Table Body `tbody`
+        let row = tbody.append("tr");
+        // `Object.values` & `forEach` to Iterate Through Values
+        Object.values(dataRow).forEach((val) => {
+            // Append a Cell to the Row for Each Value
+            let cell = row.append("td");
+            cell.text(val);
+        });
+    })
+}
+// Event that Triggers a Function When the Button is Clicked
+function handleClick(){
+    // Prevents the Page from Refreshing
+    d3.event.preventDefault();
+    // Select HTML Input Element & Get the Value Property of that Input Element
+    let date = d3.select("#datetime").property("value");
+    let filterData = tableData;
 
-// select tbody HTML element
-var tbody = d3.select("tbody");
-
-// send data from data.js to console.log
-console.log(data);
-
-// update each cell's text with UFO sighting value 
-// (date, city, state, country, shape, duration)
-data.forEach(function(ufoSighting) {
-  console.log(ufoSighting);
-  // append one table row `tr` for each ufoSighting object
-  var row = tbody.append("tr");
-  Object.entries(ufoSighting).forEach(function([key, value]) {
-    console.log(key, value);
-    // append a cell to the row for each value 
-    // in the ufoSighting object
-    var cell = tbody.append("td");
-    cell.text(value);
-  });
-});
-
-// reference to button with id set to `filter-btn`
- var submit = d3.select("#filter-btn");
-
- // use `on` function to attach event to click 
- submit.on("click", function() {
-   // stop page from reloading on click
-   d3.event.preventDefault();
-
-   // select item with class `summary`, change html content
-   d3.select(".summary").html("");
-
-   // create variables for user input
-   var inputElement = d3.select("#datetime");
-   var inputValue = inputElement.property("value");
-
-   // filter data based on user input
-   var filteredData = tableData.filter(tableData => tableData.datetime === inputValue);
-
-   // same as above, except values filtered by data
-   filteredData.forEach((dateData) => {
-     var row = tbody.append("tr");
-     Object.entries(dateData).forEach(([key, value]) => {
-       var cell = tbody.append("td");
-       cell.text(value);
-     });
-   });
- });
+    // Check if a Date was Entered & Filter Data Using that Date;
+    if(date) {
+        // Apply Filter to the Table Data to Only Keep Rows Where datetime Value Matches the Filter Value
+        filterData = filterData.filter((row) => row.datetime === date);
+    }
+    // Build Table with Filtered Data
+    buildTable(filterData);
+}
+// `on` Function to attach an Event to the Handler Function
+d3.selectAll("#filter-btn").on("click", handleClick);
+// Build Table with data.js 
+buildTable(tableData);
